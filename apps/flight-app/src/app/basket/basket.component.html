@@ -6,15 +6,17 @@
 
     <h2>Your Basket [<a [routerLink]="['/', {outlets: {aux: null}}]">x</a>]</h2>
 
-    <ul class="list-group">
 
-      <li class="list-group-item">
-        <p>Hamburg - Graz</p>
-      </li>
-      <li class="list-group-item">
-        <p>Graz - Hamburg</p>
-      </li>
+      <!-- <li class="list-group-item" *ngFor = "value in flights$ | async " >
+        <p>{{value.from}} - {{value.to}}</p>
+      </li> -->
 
-    </ul>
+      
+<ul class="list-group">
+    <li *ngFor="let f of flights" class="list-group-item">
+        <p>{{f.from}} - {{f.to}}</p>
+    </li>
+</ul>
+
   </div>
 </div>
