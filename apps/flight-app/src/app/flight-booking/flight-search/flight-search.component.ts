@@ -2,6 +2,11 @@ import {Component, OnInit} from '@angular/core';
 import {FlightService} from '@flight-workspace/flight-api';
 import { EventService } from '../../event.service';
 import { Flight } from '@flight-workspace/flight-api/src/models/flight';
+import { Store } from '@ngrx/store';
+import { FlightBookingState } from '../+state/flight-booking.interfaces';
+import { Observable } from 'rxjs/Observable';
+import { FlightsLoadedAction, FlightUpdateAction, flightLoadingAction } from '../+state/flight-booking.actions';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'flight-search',
@@ -24,23 +29,41 @@ export class FlightSearchComponent implements OnInit {
     "5": true
   };
 
+  flights$: (Observable<Flight[]>)
+
   constructor(
     private flightService: FlightService,
-    private eventService: EventService) {
+    private eventService: EventService,
+    private store: Store<FlightBookingState>) {
   }
 
   ngOnInit() {
+    this.flights$ = this.store.select(s => s.flightBooking.flights);
   }
 
   search(): void {
     if (!this.from || !this.to) return;
+    //new
+    this.store.dispatch(new flightLoadingAction(this.from, this.to, this.urgent))
 
-    this.flightService
-      .load(this.from, this.to, this.urgent);
+
+    //old
+    // this.flightService.find(this.from, this.to, this.urgent).subscribe(
+    //   s => this.store.dispatch(new FlightsLoadedAction (s))
+    // )
   }
 
   delay(): void {
-    this.flightService.delay();
+
+    this.flights$.pipe(take(1)).subscribe(flights => {
+      let flight = flights[0];
+  
+      let oldDate = new Date(flight.date);
+      let newDate = new Date(oldDate.getTime() + 15 * 60 * 1000);
+      let newFlight = { ...flight, date: newDate.toISOString() };
+      
+      this.store.dispatch(new FlightUpdateAction(newFlight));
+    });
   }
 
   select(f:Flight, selected: boolean){

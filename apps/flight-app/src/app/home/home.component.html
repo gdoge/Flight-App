@@ -12,6 +12,9 @@
     <button (click)="login()" class="btn btn-default">Login</button>
     <button (click)="destroyObs()" class="btn btn-default">DESTROY</button>
     <button (click)="logout()" class="btn btn-default">Logout</button>
+    <button (click)="increase()" class="btn btn-default">INCREASE</button>
+
+    <div>count: {{count$ | async}}</div>
 
     <!--
     <tabbed-pane [activeId]="0">

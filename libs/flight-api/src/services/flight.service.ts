@@ -6,6 +6,9 @@ import {Flight} from '../models/flight';
 import {of} from 'rxjs/observable/of';
 import {flights} from '@flight-workspace/flight-api/src/services/flight.data';
 import {delay} from 'rxjs/operators';
+import { Store } from '@ngrx/store';
+import { FlightBookingState } from '../../../../apps/flight-app/src/app/flight-booking/+state/flight-booking.interfaces';
+import { flightLoadingAction } from '../../../../apps/flight-app/src/app/flight-booking/+state/flight-booking.actions';
 
 @Injectable()
 export class FlightService {
@@ -14,17 +17,21 @@ export class FlightService {
   baseUrl: string = `http://www.angular.at/api`;
   reqDelay = 1000;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private store: Store<FlightBookingState>) {
   }
 
   load(from: string, to: string, urgent: boolean): void {
-    this.find(from, to, urgent)
-      .subscribe(
-        flights => {
-          this.flights = flights;
-        },
-        err => console.error('Error loading flights', err)
-      );
+
+    //new 
+
+    //old
+    // this.find(from, to, urgent)
+    //   .subscribe(
+    //     flights => {
+    //       this.flights = flights;
+    //     },
+    //     err => console.error('Error loading flights', err)
+    //   );
   }
 
   find(from: string, to: string, urgent: boolean = false): Observable<Flight[]> {
@@ -73,8 +80,8 @@ export class FlightService {
     let oldDate = new Date(oldFlight.date);
 
     // Mutable
-    oldDate.setTime(oldDate.getTime() + 15 * ONE_MINUTE);
-    oldFlight.date = oldDate.toISOString();
+    // oldDate.setTime(oldDate.getTime() + 15 * ONE_MINUTE);
+    // oldFlight.date = oldDate.toISOString();
   }
 
 }

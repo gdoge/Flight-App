@@ -1,8 +1,12 @@
 import { Component, OnInit, ViewEncapsulation, OnDestroy } from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs/Subscription';
+import { IncreaseByAction } from '../+state/app.actions';
+import { AppState } from '../+state/app.interfaces';
 import { Subject } from 'rxjs/Subject';
+import { Subscription } from 'rxjs/Subscription';
+import { Store } from '@ngrx/store';
+import { getCount } from '../+state/app.selectors';
 
 @Component({
   selector: 'app-home',
@@ -15,8 +19,10 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   destroy$: Subject<boolean> = new Subject<boolean>();
   subscription$: Subscription;
+  count$: Observable<number>;
 
-  constructor(private route: ActivatedRoute) {
+  constructor(private route: ActivatedRoute, private store: Store<AppState>) {
+    this.count$ = store.select(getCount)
   }
 
   needsLogin: boolean;
@@ -39,6 +45,8 @@ export class HomeComponent implements OnInit, OnDestroy {
         console.log(data)
       }
     )
+
+    
   }
 
   destroyObs(){
@@ -61,5 +69,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     this._userName = '';
   }
 
-
+  increase(){
+    this.store.dispatch(new IncreaseByAction(1));
+  }
 }
